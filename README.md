@@ -63,3 +63,45 @@ Necklace Embedding   Earring Embeddings
              |
              v
        Frontend Results
+
+## Technologies & Tools
+
+### AI / Machine Learning
+
+- Python
+- PyTorch
+- Hugging Face Transformers
+- CLIP (`openai/clip-vit-base-patch32`)
+- NumPy
+
+### Backend
+
+- FastAPI
+- Uvicorn
+
+### Frontend
+
+- HTML
+- CSS
+- JavaScript
+
+### Data & Image Processing
+
+- Pandas
+- Pillow (PIL)
+
+### Development Tools
+
+- Visual Studio Code
+- Git
+- GitHub
+
+## Dataset
+
+The provided dataset contains:
+
+- 5 necklace images
+- 15 earring images
+- `candidate_dataset.csv`
+
+The CSV file contains product information such as product IDs, product types, and image filenames.
