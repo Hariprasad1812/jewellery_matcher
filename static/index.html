@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        AI Jewellery Matcher
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/static/style.css"
+    >
+
+</head>
+
+
+<body>
+
+    <div class="page">
+
+
+        <!-- ==================================================
+             HEADER
+        =================================================== -->
+
+        <header class="hero">
+
+            <div class="brand-pill">
+                ✦ AI JEWELLERY MATCHER
+            </div>
+
+
+            <h1>
+                Find the Perfect
+                <span>Earrings</span>
+            </h1>
+
+
+            <p class="hero-description">
+
+                Discover visually matching earrings
+                from our jewellery inventory using
+                AI-powered image similarity.
+
+            </p>
+
+        </header>
+
+
+
+        <!-- ==================================================
+             MAIN
+        =================================================== -->
+
+        <main>
+
+
+            <!-- ==================================================
+                 NECKLACE SELECTION
+            =================================================== -->
+
+            <section class="selection-card">
+
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <div class="eyebrow">
+                            STEP 01
+                        </div>
+
+                        <h2>
+                            Select a Necklace
+                        </h2>
+
+                        <p>
+                            Choose from the provided
+                            jewellery collection.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Provided necklaces -->
+
+                <div
+                    id="necklaceGrid"
+                    class="necklace-grid"
+                >
+
+                    <!-- JavaScript inserts necklaces here -->
+
+                </div>
+
+
+
+                <div class="divider">
+
+                    <span>OR</span>
+
+                </div>
+
+
+
+                <!-- Upload -->
+
+                <label
+                    for="imageInput"
+                    class="upload-box"
+                >
+
+                    <div class="upload-symbol">
+                        ↑
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Upload your own necklace
+                        </strong>
+
+                        <span>
+                            JPG, PNG or WEBP
+                        </span>
+
+                    </div>
+
+                </label>
+
+
+                <input
+                    id="imageInput"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    hidden
+                >
+
+
+            </section>
+
+
+
+            <!-- ==================================================
+                 SELECTED NECKLACE
+            =================================================== -->
+
+            <section
+                id="selectedSection"
+                class="selected-card hidden"
+            >
+
+                <div class="selected-image-wrapper">
+
+                    <img
+                        id="selectedImage"
+                        alt="Selected necklace"
+                    >
+
+                </div>
+
+
+                <div class="selected-details">
+
+                    <div class="eyebrow">
+                        SELECTED NECKLACE
+                    </div>
+
+                    <h2 id="selectedName">
+                        Necklace
+                    </h2>
+
+                    <p>
+                        Ready for AI visual matching.
+                    </p>
+
+
+                    <div class="actions">
+
+                        <button
+                            id="matchButton"
+                            class="primary-button"
+                        >
+                            ✦ Find Matching Earrings
+                        </button>
+
+
+                        <button
+                            id="resetButton"
+                            class="secondary-button"
+                        >
+                            Choose Another
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ==================================================
+                 LOADING
+            =================================================== -->
+
+            <section
+                id="loading"
+                class="loading-card hidden"
+            >
+
+                <div class="loader"></div>
+
+                <h3>
+                    Analysing your necklace
+                </h3>
+
+                <p>
+                    Comparing visual features with
+                    15 earrings in the inventory...
+                </p>
+
+            </section>
+
+
+
+            <!-- ==================================================
+                 RESULTS
+            =================================================== -->
+
+            <section
+                id="resultsSection"
+                class="results-card hidden"
+            >
+
+                <div class="results-header">
+
+                    <div>
+
+                        <div class="eyebrow">
+                            STEP 02 · AI RECOMMENDATIONS
+                        </div>
+
+                        <h2>
+                            Best Matching Earrings
+                        </h2>
+
+                        <p>
+                            Ranked by visual similarity
+                            to your selected necklace.
+                        </p>
+
+                    </div>
+
+
+                    <div class="inventory-badge">
+                        15 earrings analysed
+                    </div>
+
+                </div>
+
+
+
+                <div
+                    id="results"
+                    class="results-grid"
+                >
+
+                </div>
+
+
+                <div class="similarity-note">
+
+                    <span>ⓘ</span>
+
+                    <p>
+                        Similarity scores represent
+                        visual embedding similarity,
+                        not prediction confidence.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+
+
+        <!-- ==================================================
+             FOOTER
+        =================================================== -->
+
+        <footer>
+
+            <div>
+                CLIP Vision Model
+                <span>•</span>
+                Cosine Similarity
+                <span>•</span>
+                FastAPI
+            </div>
+
+            <p>
+                Jewellery matching prototype
+            </p>
+
+        </footer>
+
+
+    </div>
+
+
+    <script src="/static/script.js"></script>
+
+</body>
+
+</html>
