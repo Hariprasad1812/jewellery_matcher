@@ -6,9 +6,9 @@ import torch
 
 from PIL import Image
 
-from transformers import (
-    CLIPProcessor,
-    CLIPModel
+from torchvision.models import (
+    mobilenet_v3_small,
+    MobileNet_V3_Small_Weights
 )
 
 
@@ -26,37 +26,38 @@ CSV_PATH = DATA_DIR / "candidate_dataset.csv"
 
 
 # ============================================================
-# 2. LOAD CLIP MODEL
+# 2. LOAD LIGHTWEIGHT IMAGE MODEL
 # ============================================================
 
-MODEL_NAME = "openai/clip-vit-base-patch32"
+print("\nLoading lightweight image model...")
 
-print("\nLoading CLIP model...")
-
-device = (
-    "cuda"
-    if torch.cuda.is_available()
-    else "cpu"
-)
+device = "cpu"
 
 print(f"Device: {device}")
 
 
-model = CLIPModel.from_pretrained(
-    MODEL_NAME
+# Use pretrained MobileNetV3-Small
+weights = MobileNet_V3_Small_Weights.DEFAULT
+
+model = mobilenet_v3_small(
+    weights=weights
 )
 
-processor = CLIPProcessor.from_pretrained(
-    MODEL_NAME
-)
+
+# Remove the final classification layer.
+# The remaining network produces visual features.
+model.classifier = torch.nn.Identity()
 
 model.to(device)
 
 model.eval()
 
-print(
-    "CLIP model loaded successfully."
-)
+
+# Image preprocessing
+preprocess = weights.transforms()
+
+
+print("MobileNetV3-Small model loaded successfully.")
 
 
 # ============================================================
@@ -67,7 +68,7 @@ def get_image_embedding(image):
 
     """
     Convert an image into a normalized
-    CLIP visual embedding.
+    visual embedding.
     """
 
     # Make sure image is RGB
@@ -78,40 +79,22 @@ def get_image_embedding(image):
     # Prepare image
     # --------------------------------------------------------
 
-    inputs = processor(
-        images=image,
-        return_tensors="pt"
-    )
+    image_tensor = preprocess(image)
 
+    # Add batch dimension
+    image_tensor = image_tensor.unsqueeze(0)
 
-    # Move tensors to CPU/GPU
-    inputs = {
-        key: value.to(device)
-        for key, value in inputs.items()
-    }
+    # Move to CPU
+    image_tensor = image_tensor.to(device)
 
 
     # --------------------------------------------------------
-    # CLIP Vision Encoder
+    # Generate visual features
     # --------------------------------------------------------
 
     with torch.no_grad():
 
-        vision_outputs = model.vision_model(
-            pixel_values=inputs["pixel_values"]
-        )
-
-
-        # Get pooled visual representation
-        pooled_output = (
-            vision_outputs.pooler_output
-        )
-
-
-        # Project into CLIP embedding space
-        image_features = model.visual_projection(
-            pooled_output
-        )
+        features = model(image_tensor)
 
 
     # --------------------------------------------------------
@@ -119,7 +102,7 @@ def get_image_embedding(image):
     # --------------------------------------------------------
 
     embedding = (
-        image_features
+        features
         .cpu()
         .numpy()[0]
     )
@@ -130,9 +113,8 @@ def get_image_embedding(image):
     # --------------------------------------------------------
 
     embedding = embedding / (
-        np.linalg.norm(
-            embedding
-        ) + 1e-12
+        np.linalg.norm(embedding)
+        + 1e-12
     )
 
 
@@ -148,6 +130,7 @@ print("\nLoading dataset...")
 df = pd.read_csv(
     CSV_PATH
 )
+
 
 print(
     f"Total products: {len(df)}"
@@ -198,7 +181,10 @@ for _, row in earrings_df.iterrows():
     )
 
 
+    # --------------------------------------------------------
     # Check image exists
+    # --------------------------------------------------------
+
     if not image_path.exists():
 
         print(
@@ -216,22 +202,32 @@ for _, row in earrings_df.iterrows():
     )
 
 
+    # --------------------------------------------------------
     # Load image
+    # --------------------------------------------------------
+
     image = Image.open(
         image_path
     ).convert("RGB")
 
 
+    # --------------------------------------------------------
     # Generate embedding
+    # --------------------------------------------------------
+
     embedding = get_image_embedding(
         image
     )
 
 
+    # --------------------------------------------------------
     # Store product information
+    # --------------------------------------------------------
+
     earring_embeddings.append(
         {
-            "id": row["id"],
+            "id":
+                row["id"],
 
             "product_type":
                 row["product_type"],
@@ -264,6 +260,7 @@ def find_matches(
     Compare the uploaded necklace
     against all inventory earrings.
     """
+
 
     # --------------------------------------------------------
     # Generate necklace embedding
@@ -359,14 +356,20 @@ if __name__ == "__main__":
     )
 
 
+    # --------------------------------------------------------
     # Test necklace
+    # --------------------------------------------------------
+
     test_image_path = (
         IMAGE_DIR /
         "Nck_1.jpg"
     )
 
 
+    # --------------------------------------------------------
     # Check necklace exists
+    # --------------------------------------------------------
+
     if not test_image_path.exists():
 
         print(
@@ -387,13 +390,19 @@ if __name__ == "__main__":
     )
 
 
+    # --------------------------------------------------------
     # Load necklace
+    # --------------------------------------------------------
+
     test_image = Image.open(
         test_image_path
     ).convert("RGB")
 
 
+    # --------------------------------------------------------
     # Find matches
+    # --------------------------------------------------------
+
     matches = find_matches(
         test_image,
         top_k=3
