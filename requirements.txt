@@ -8,4 +8,4 @@ torch
 torchvision
 transformers
 scikit-learn
-gunicorn
+
