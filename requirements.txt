@@ -6,6 +6,5 @@ numpy
 pandas
 torch
 torchvision
-transformers
 scikit-learn
 
